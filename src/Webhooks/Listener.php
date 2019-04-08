@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM\Webhooks;
+namespace RemakeAmoCRM\Webhooks;
 
 use AmoCRM\Exception;
 

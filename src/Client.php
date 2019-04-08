@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM;
+namespace RemakeAmoCRM;
 
 use AmoCRM\Models\ModelInterface;
 use AmoCRM\Request\CurlHandle;

@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM\Request;
+namespace RemakeAmoCRM\Request;
 
 /**
  * Class ParamsBag

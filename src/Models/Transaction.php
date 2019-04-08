@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM\Models;
+namespace RemakeAmoCRM\Models;
 
 use AmoCRM\Models\Traits\SetDate;
 use AmoCRM\Models\Traits\SetNextDate;

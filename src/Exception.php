@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM;
+namespace RemakeAmoCRM;
 
 /**
  * Class Exception

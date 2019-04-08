@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM\Models\Traits;
+namespace RemakeAmoCRM\Models\Traits;
 
 trait SetTags
 {

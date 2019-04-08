@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM\Helpers;
+namespace RemakeAmoCRM\Helpers;
 
 /**
  * Class B2BFamilyException

@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM\Models;
+namespace RemakeAmoCRM\Models;
 
 use AmoCRM\Models\Traits\SetNote;
 use AmoCRM\Models\Traits\SetTags;

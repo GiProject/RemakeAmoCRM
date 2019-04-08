@@ -1,6 +1,6 @@
 <?php
 
-namespace AmoCRM\Helpers;
+namespace RemakeAmoCRM\Helpers;
 
 use AmoCRM\Client;
 use AmoCRM\Request\ParamsBag;
