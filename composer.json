@@ -1,0 +1,13 @@
+{
+    "name": "awp-studio/remake-amo-crm",
+    "type": "library",
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "Evgenii Kulinichev",
+            "email": "info@awp-studio.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
