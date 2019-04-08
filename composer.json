@@ -1,7 +1,7 @@
 {
     "name": "awp-studio/remake-amo-crm",
     "type": "library",
-    "license": "GNU",
+    "license": "MIT",
     "authors": [
         {
             "name": "Evgenii Kulinichev",
