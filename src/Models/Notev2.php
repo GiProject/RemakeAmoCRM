@@ -170,7 +170,7 @@ class Notev2 extends AbstractModel
      * @param int $id Уникальный идентификатор примечания
      * @param string $modified Дата последнего изменения данной сущности
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiUpdate($id, $modified = 'now')
     {

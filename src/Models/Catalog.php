@@ -93,7 +93,7 @@ class Catalog extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/catalogs/set.php
      * @param int $id Уникальный идентификатор каталога
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiUpdate($id)
     {
@@ -127,7 +127,7 @@ class Catalog extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/catalogs/set.php
      * @param int $id Уникальный идентификатор каталога
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiDelete($id)
     {

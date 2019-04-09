@@ -2,8 +2,8 @@
 
 namespace RemakeAmoCRM\Helpers;
 
-use AmoCRM\Client;
-use AmoCRM\Request\ParamsBag;
+use RemakeAmoCRM\Client;
+use RemakeAmoCRM\Request\ParamsBag;
 
 /**
  * Class B2BFamily

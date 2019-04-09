@@ -7,7 +7,7 @@ namespace RemakeAmoCRM\Models;
  *
  * Класс модель для работы с Элементами каталога
  *
- * @package AmoCRM\Models
+ * @package RemakeAmoCRM\Models
  * @author mb@baso-it.ru
  * @author dotzero <mail@dotzero.ru>
  * @link https://github.com/dotzero/amocrm-php
@@ -34,7 +34,7 @@ class CatalogElement extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/catalog_elements/list.php
      * @param array $parameters Массив параметров к amoCRM API
      * @return array Ответ amoCRM API
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiList($parameters = [])
     {
@@ -89,7 +89,7 @@ class CatalogElement extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/catalog_elements/set.php
      * @param int $id Уникальный идентификатор элемента каталога
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiUpdate($id)
     {
@@ -123,7 +123,7 @@ class CatalogElement extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/catalog_elements/set.php
      * @param int $id Уникальный идентификатор элемента каталога
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiDelete($id)
     {
@@ -152,7 +152,7 @@ class CatalogElement extends AbstractModel
      * @link https://developers.amocrm.com/rest_api/catalog_elements/set.php
      * @param array $ids Уникальные идентификаторы элементов каталога
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiDeleteBatch(array $ids)
     {

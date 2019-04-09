@@ -2,7 +2,7 @@
 
 namespace RemakeAmoCRM\Request;
 
-use AmoCRM\NetworkException;
+use RemakeAmoCRM\NetworkException;
 
 /**
  * Class CurlHandle

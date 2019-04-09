@@ -2,15 +2,15 @@
 
 namespace RemakeAmoCRM\Models;
 
-use AmoCRM\Models\Traits\SetDateCreate;
-use AmoCRM\Models\Traits\SetLastModified;
+use RemakeAmoCRM\Models\Traits\SetDateCreate;
+use RemakeAmoCRM\Models\Traits\SetLastModified;
 
 /**
  * Class Note
  *
  * Класс модель для работы с Примечаниями
  *
- * @package AmoCRM\Models
+ * @package RemakeAmoCRM\Models
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php
@@ -80,7 +80,7 @@ class Call extends AbstractModel
      * @param int $id Уникальный идентификатор примечания
      * @param string $modified Дата последнего изменения данной сущности
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiUpdate($id, $modified = 'now')
     {

@@ -2,7 +2,7 @@
 
 namespace RemakeAmoCRM\Models\Traits;
 
-use AmoCRM\Models\Note;
+use RemakeAmoCRM\Models\Note;
 
 trait SetNote
 {

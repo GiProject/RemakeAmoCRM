@@ -4,8 +4,8 @@ namespace RemakeAmoCRM\Request;
 
 use DateTime;
 //use PDO;
-use AmoCRM\Exception;
-use AmoCRM\NetworkException;
+use RemakeAmoCRM\Exception;
+use RemakeAmoCRM\NetworkException;
 
 //include_once '/home/admin/web/pinscherweb.ru/public_html/functions/function.php';
 

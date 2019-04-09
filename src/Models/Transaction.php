@@ -2,8 +2,8 @@
 
 namespace RemakeAmoCRM\Models;
 
-use AmoCRM\Models\Traits\SetDate;
-use AmoCRM\Models\Traits\SetNextDate;
+use RemakeAmoCRM\Models\Traits\SetDate;
+use RemakeAmoCRM\Models\Traits\SetNextDate;
 
 /**
  * Class Transaction

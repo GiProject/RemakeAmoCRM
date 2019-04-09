@@ -7,7 +7,7 @@ namespace RemakeAmoCRM;
  *
  * Базовый класс для всех исключений amoCRM API
  *
- * @package AmoCRM
+ * @package RemakeAmoCRM
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php

@@ -2,17 +2,17 @@
 
 namespace RemakeAmoCRM\Models;
 
-use AmoCRM\Models\Traits\SetNote;
-use AmoCRM\Models\Traits\SetTags;
-use AmoCRM\Models\Traits\SetDateCreate;
-use AmoCRM\Models\Traits\SetLastModified;
+use RemakeAmoCRM\Models\Traits\SetNote;
+use RemakeAmoCRM\Models\Traits\SetTags;
+use RemakeAmoCRM\Models\Traits\SetDateCreate;
+use RemakeAmoCRM\Models\Traits\SetLastModified;
 
 /**
  * Class Lead
  *
  * Класс модель для работы со Сделками
  *
- * @package AmoCRM\Models
+ * @package RemakeAmoCRM\Models
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php

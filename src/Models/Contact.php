@@ -2,11 +2,11 @@
 
 namespace RemakeAmoCRM\Models;
 
-use AmoCRM\Models\Traits\SetNote;
-use AmoCRM\Models\Traits\SetTags;
-use AmoCRM\Models\Traits\SetDateCreate;
-use AmoCRM\Models\Traits\SetLastModified;
-use AmoCRM\Models\Traits\SetLinkedLeadsId;
+use RemakeAmoCRM\Models\Traits\SetNote;
+use RemakeAmoCRM\Models\Traits\SetTags;
+use RemakeAmoCRM\Models\Traits\SetDateCreate;
+use RemakeAmoCRM\Models\Traits\SetLastModified;
+use RemakeAmoCRM\Models\Traits\SetLinkedLeadsId;
 
 /**
  * Class Contact
@@ -108,7 +108,7 @@ class Contact extends AbstractModel
      * @param int $id Уникальный идентификатор контакта
      * @param string $modified Дата последнего изменения данной сущности
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiUpdate($id, $modified = 'now')
     {

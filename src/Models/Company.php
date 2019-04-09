@@ -2,10 +2,10 @@
 
 namespace RemakeAmoCRM\Models;
 
-use AmoCRM\Models\Traits\SetTags;
-use AmoCRM\Models\Traits\SetDateCreate;
-use AmoCRM\Models\Traits\SetLastModified;
-use AmoCRM\Models\Traits\SetLinkedLeadsId;
+use RemakeAmoCRM\Models\Traits\SetTags;
+use RemakeAmoCRM\Models\Traits\SetDateCreate;
+use RemakeAmoCRM\Models\Traits\SetLastModified;
+use RemakeAmoCRM\Models\Traits\SetLinkedLeadsId;
 
 /**
  * Class Company

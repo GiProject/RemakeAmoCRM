@@ -7,10 +7,10 @@ namespace RemakeAmoCRM\Models;
  *
  * Класс модель для работы со Связями между сущностями
  *
- * @package AmoCRM\Models
+ * @package RemakeAmoCRM\Models
  * @author mb@baso-it.ru
  * @author dotzero <mail@dotzero.ru>
- * @link https://github.com/dotzero/amocrm-php
+ * @link https://github.com/dotzero/RemakeAmoCRM-php
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -36,7 +36,7 @@ class Links extends AbstractModel
      * Метод для получения связей между сущностями аккаунта
      *
      * @link https://developers.amocrm.ru/rest_api/links/list.php
-     * @param array $parameters Массив параметров к amoCRM API
+     * @param array $parameters Массив параметров к RemakeAmoCRM API
      * @return array Ответ amoCRM API
      */
     public function apiList($parameters)

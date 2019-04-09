@@ -2,7 +2,7 @@
 
 namespace RemakeAmoCRM\Webhooks;
 
-use AmoCRM\Exception;
+use RemakeAmoCRM\Exception;
 
 /**
  * Class Listener

@@ -7,7 +7,7 @@ namespace RemakeAmoCRM\Helpers;
  *
  * Базовый класс для исключений B2BFamily
  *
- * @package AmoCRM\Helpers
+ * @package RemakeAmoCRM\Helpers
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php

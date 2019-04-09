@@ -5,7 +5,7 @@ namespace RemakeAmoCRM\Models\Traits;
 /**
  * Trait SetDate
  *
- * @package AmoCRM\Models\Traits
+ * @package RemakeAmoCRM\Models\Traits
  * @author denostr <4deni.kiev@gmail.com>
  * @link https://github.com/dotzero/amocrm-php
  *

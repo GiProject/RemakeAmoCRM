@@ -2,8 +2,8 @@
 
 namespace RemakeAmoCRM\Models;
 
-use AmoCRM\Models\Traits\SetTags;
-use AmoCRM\Models\Traits\SetNextDate;
+use RemakeAmoCRM\Models\Traits\SetTags;
+use RemakeAmoCRM\Models\Traits\SetNextDate;
 
 /**
  * Class Customer

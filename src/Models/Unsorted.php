@@ -2,7 +2,7 @@
 
 namespace RemakeAmoCRM\Models;
 
-use AmoCRM\Models\Traits\SetDateCreate;
+use RemakeAmoCRM\Models\Traits\SetDateCreate;
 
 /**
  * Class Unsorted

@@ -7,7 +7,7 @@ namespace RemakeAmoCRM\Models;
  *
  * Класс модель для работы с списком воронок и этапов продаж
  *
- * @package AmoCRM\Models
+ * @package RemakeAmoCRM\Models
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php
@@ -52,7 +52,7 @@ class Pipelines extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/pipelines/list.php
      * @param null|int $id Уникальный идентификатор воронки
      * @return array Ответ amoCRM API
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiList($id = null)
     {
@@ -117,7 +117,7 @@ class Pipelines extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/pipelines/set.php
      * @param int $id Уникальный идентификатор воронки
      * @return bool Флаг успешности выполнения запроса
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiUpdate($id)
     {
@@ -151,7 +151,7 @@ class Pipelines extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/pipelines/delete.php
      * @param int $id Уникальный идентификатор воронки
      * @return array Ответ amoCRM API
-     * @throws \AmoCRM\Exception
+     * @throws \RemakeAmoCRM\Exception
      */
     public function apiDelete($id)
     {
