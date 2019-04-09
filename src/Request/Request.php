@@ -2,13 +2,8 @@
 
 namespace RemakeAmoCRM\Request;
 
-use DateTime;
-//use PDO;
 use RemakeAmoCRM\Exception;
 use RemakeAmoCRM\NetworkException;
-
-//include_once '/home/admin/web/pinscherweb.ru/public_html/functions/function.php';
-
 
 
 /**
@@ -64,10 +59,6 @@ class Request
         if (!function_exists('curl_init')) {
             throw new NetworkException('The cURL PHP extension was not loaded');
         }
-      
-        //$this->pdo = new PDO('mysql:host=localhost;dbname=admin_amo;charset=utf8','admin_amo','FJQNmribot');
-        //$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
 
         $this->parameters = $parameters;
     }
@@ -166,7 +157,7 @@ class Request
             if (is_int($modified)) {
                 $headers[] = 'IF-MODIFIED-SINCE: ' . $modified;
             } else {
-                $headers[] = 'IF-MODIFIED-SINCE: ' . (new DateTime($modified))->format(DateTime::RFC1123);
+                $headers[] = 'IF-MODIFIED-SINCE: ' . (new \DateTime($modified))->format(\DateTime::RFC1123);
             }
         }
 
@@ -208,16 +199,16 @@ class Request
     protected function request($url, $modified = null)
     {
       
-        $last_request = $this->read_last_request();
-        $last_request = $last_request['time'];
-      
-        $diff_time = round(((double)doubleTime() - (double)$last_request) * 1000)/1000;
-      
-        $sleep_time = (1 - $diff_time) * 1000000;
-      
-        if($sleep_time > 0) usleep($sleep_time);
-
-        $this->write_last_request(doubleTime());
+//        $last_request = $this->read_last_request();
+//        $last_request = $last_request['time'];
+//
+//        $diff_time = round(((double)doubleTime() - (double)$last_request) * 1000)/1000;
+//
+//        $sleep_time = (1 - $diff_time) * 1000000;
+//
+//        if($sleep_time > 0) usleep($sleep_time);
+//
+//        $this->write_last_request(doubleTime());
       
       
         $cookie = $_SERVER['DOCUMENT_ROOT'].'/vendor/dotzero/amocrm/cookie/'.$this->parameters->getAuth('domain').'_cookie.txt';
@@ -258,43 +249,16 @@ class Request
                 }
                 $fields = json_encode( $rParams, 1);
             }
-            //custom_log($fields, array('file' => 'post.log')); 
           
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
             $this->printDebug('post params', $fields);
-            //echo '<pre>'.print_r($fields, 1).'</pre>';
           
         }
 
         if ($this->parameters->hasProxy()) {
             curl_setopt($ch, CURLOPT_PROXY, $this->parameters->getProxy());
         }
-      
-        $proxi = [
-          'ru1.proxik.net:80',
-          //'ru2.proxik.net:8080',
-          'ru3.proxik.net:8080',
-          //'ru4.proxik.net:8080',
-          //'ru5.proxik.net:8080',
-        ];
-      
-        /*$proxi = [
-          ['185.234.244.32:62022','bb47e89d99:d965b8dce7'],
-          ['185.232.97.38:62466','d8e8b295d9:d5d49b8d25'],
-          ['185.234.245.205:26130','e994d556b2:c7585eb63d'],
-          ['193.17.91.158:57771','bbbe795542:54bd8527f5'],
-          ['194.28.192.71:45836','2b6d7b9175:99bd1785e8'],
-        ];
-        
-        $proxi_key = array_rand($proxi, 1);
-      
-        curl_setopt($ch, CURLOPT_PROXY, $proxi[$proxi_key][0]);
-        curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxi[$proxi_key][1]);
-        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        */
-        
-        //custom_log(date('m.d.Y H:i:s').': '.$url);
         
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
@@ -323,13 +287,9 @@ class Request
         if(intval($info['http_code']) == 429 || intval($info['http_code']) == 403){
           sleep(1);
           $this->request($url, $modified);
-          //custom_log(json_encode($info), array('file' => 'error.log')); 
         }
-
-        //custom_log(json_encode($info), array('file' => 'curl_data.log')); 
       
         return $this->parseResponse($result, $info);
-
 
     }
 
@@ -401,22 +361,5 @@ class Request
 
         return $line;
     }
-  
-    private function write_last_request($data = 0){
-      
-      //$sql = "INSERT INTO `last_request` (`id`, `time`) VALUES ('',$data)";
-      
-      //$this->pdo->query($sql);
-      
-    }
-  
-    private function read_last_request(){
-      
-      //$sql = "SELECT * FROM `last_request` WHERE `time` = (SELECT MAX(`time`) FROM `last_request`) LIMIT 1";
-      
-      //$result = query_in_array($this->pdo->query($sql));
-      
-      //return $result[0];
-      
-    }
+
 }
