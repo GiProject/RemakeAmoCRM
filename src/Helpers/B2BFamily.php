@@ -1,9 +1,9 @@
 <?php
 
-namespace RemakeAmoCRM\Helpers;
+namespace lib\AmoCRM\Helpers;
 
-use RemakeAmoCRM\Client;
-use RemakeAmoCRM\Request\ParamsBag;
+use lib\AmoCRM\Client;
+use lib\AmoCRM\Request\ParamsBag;
 
 /**
  * Class B2BFamily

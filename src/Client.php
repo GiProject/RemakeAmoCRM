@@ -1,40 +1,40 @@
 <?php
 
-namespace RemakeAmoCRM;
+namespace lib\AmoCRM;
 
-use RemakeAmoCRM\Models\ModelInterface;
-use RemakeAmoCRM\Request\CurlHandle;
-use RemakeAmoCRM\Request\ParamsBag;
-use RemakeAmoCRM\Helpers\Fields;
-use RemakeAmoCRM\Helpers\Format;
+use lib\AmoCRM\Models\ModelInterface;
+use lib\AmoCRM\Request\CurlHandle;
+use lib\AmoCRM\Request\ParamsBag;
+use lib\AmoCRM\Helpers\Fields;
+use lib\AmoCRM\Helpers\Format;
 
 /**
  * Class Client
  *
  * Основной класс для получения доступа к моделям amoCRM API
  *
- * @package RemakeAmoCRM
+ * @package AmoCRM
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php
- * @property \RemakeAmoCRM\Models\Account $account
- * @property \RemakeAmoCRM\Models\Call $call
- * @property \RemakeAmoCRM\Models\Catalog $catalog
- * @property \RemakeAmoCRM\Models\CatalogElement $catalog_element
- * @property \RemakeAmoCRM\Models\Company $company
- * @property \RemakeAmoCRM\Models\Contact $contact
- * @property \RemakeAmoCRM\Models\Customer $customer
- * @property \RemakeAmoCRM\Models\CustomersPeriods $customers_periods
- * @property \RemakeAmoCRM\Models\CustomField $custom_field
- * @property \RemakeAmoCRM\Models\Lead $lead
- * @property \RemakeAmoCRM\Models\Links $links
- * @property \RemakeAmoCRM\Models\Note $note
- * @property \RemakeAmoCRM\Models\Pipelines $pipelines
- * @property \RemakeAmoCRM\Models\Task $task
- * @property \RemakeAmoCRM\Models\Transaction $transaction
- * @property \RemakeAmoCRM\Models\Unsorted $unsorted
- * @property \RemakeAmoCRM\Models\Webhooks $webhooks
- * @property \RemakeAmoCRM\Models\Widgets $widgets
+ * @property \AmoCRM\Models\Account $account
+ * @property \AmoCRM\Models\Call $call
+ * @property \AmoCRM\Models\Catalog $catalog
+ * @property \AmoCRM\Models\CatalogElement $catalog_element
+ * @property \AmoCRM\Models\Company $company
+ * @property \AmoCRM\Models\Contact $contact
+ * @property \AmoCRM\Models\Customer $customer
+ * @property \AmoCRM\Models\CustomersPeriods $customers_periods
+ * @property \AmoCRM\Models\CustomField $custom_field
+ * @property \AmoCRM\Models\Lead $lead
+ * @property \AmoCRM\Models\Links $links
+ * @property \AmoCRM\Models\Note $note
+ * @property \AmoCRM\Models\Pipelines $pipelines
+ * @property \AmoCRM\Models\Task $task
+ * @property \AmoCRM\Models\Transaction $transaction
+ * @property \AmoCRM\Models\Unsorted $unsorted
+ * @property \AmoCRM\Models\Webhooks $webhooks
+ * @property \AmoCRM\Models\Widgets $widgets
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -59,12 +59,11 @@ class Client
     /**
      * Client constructor
      *
-     * @param string $domain Поддомен или домен RemakeAmoCRM
-     * @param string $login Логин RemakeAmoCRM
-     * @param string $apikey Ключ пользователя RemakeAmoCRM
+     * @param string $domain Поддомен или домен amoCRM
+     * @param string $widget код интеграции amoCRM
      * @param string|null $proxy Прокси сервер для отправки запроса
      */
-    public function __construct($domain, $login, $apikey, $proxy = null)
+    public function __construct($domain, $widget = '', $proxy = null)
     {
         // Разернуть поддомен в полный домен
         if (strpos($domain, '.') === false) {
@@ -73,8 +72,7 @@ class Client
 
         $this->parameters = new ParamsBag();
         $this->parameters->addAuth('domain', $domain);
-        $this->parameters->addAuth('login', $login);
-        $this->parameters->addAuth('apikey', $apikey);
+        $this->parameters->addAuth('widget', $widget);
 
         if ($proxy !== null) {
             $this->parameters->addProxy($proxy);
@@ -94,7 +92,7 @@ class Client
      */
     public function __get($name)
     {
-        $classname = '\\RemakeAmoCRM\\Models\\' . Format::camelCase($name);
+        $classname = '\\lib\\AmoCRM\\Models\\' . Format::camelCase($name);
 
         if (!class_exists($classname)) {
             throw new ModelException('Model not exists: ' . $name);
@@ -102,7 +100,7 @@ class Client
 
         // Чистим GET и POST от предыдущих вызовов
         $this->parameters->clearGet()->clearPost();
-
+        
         return new $classname($this->parameters, $this->curlHandle);
     }
 }

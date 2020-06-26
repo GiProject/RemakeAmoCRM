@@ -1,6 +1,6 @@
 <?php
 
-namespace RemakeAmoCRM\Models;
+namespace lib\AmoCRM\Models;
 
 /**
  * Class Catalog
@@ -93,7 +93,7 @@ class Catalog extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/catalogs/set.php
      * @param int $id Уникальный идентификатор каталога
      * @return bool Флаг успешности выполнения запроса
-     * @throws \RemakeAmoCRM\Exception
+     * @throws \AmoCRM\Exception
      */
     public function apiUpdate($id)
     {
@@ -127,7 +127,7 @@ class Catalog extends AbstractModel
      * @link https://developers.amocrm.ru/rest_api/catalogs/set.php
      * @param int $id Уникальный идентификатор каталога
      * @return bool Флаг успешности выполнения запроса
-     * @throws \RemakeAmoCRM\Exception
+     * @throws \AmoCRM\Exception
      */
     public function apiDelete($id)
     {

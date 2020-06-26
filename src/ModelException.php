@@ -1,13 +1,13 @@
 <?php
 
-namespace RemakeAmoCRM;
+namespace lib\AmoCRM;
 
 /**
  * Class Exception
  *
  * Исключение выбрасываемое при обращении к несуществующим моделям amoCRM API
  *
- * @package RemakeAmoCRM
+ * @package AmoCRM
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php

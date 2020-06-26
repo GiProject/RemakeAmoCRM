@@ -1,10 +1,11 @@
 <?php
 
-namespace RemakeAmoCRM\Request;
+namespace lib\AmoCRM\Request;
 
-use RemakeAmoCRM\Exception;
-use RemakeAmoCRM\NetworkException;
-
+use DateTime;
+use lib\AmoCRM\Exception;
+use lib\AmoCRM\NetworkException;
+use lib\AmoCRM\Oauth;
 
 /**
  * Class Request
@@ -12,7 +13,7 @@ use RemakeAmoCRM\NetworkException;
  * Класс отправляющий запросы к API amoCRM используя cURL
  *
  * @package AmoCRM\Request
- * @author dotzero <mail@dotzero.ru>
+ * @author dotzero <mail@dotzero.ru>getRequest
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php
  *
@@ -37,6 +38,11 @@ class Request
     private $parameters = null;
 
     /**
+     * @var CurlHandle Экземпляр CurlHandle
+     */
+    private $curlHandle;
+
+    /**
      * @var int|null Последний полученный HTTP код
      */
     private $lastHttpCode = null;
@@ -45,22 +51,17 @@ class Request
      * @var string|null Последний полученный HTTP ответ
      */
     private $lastHttpResponse = null;
-  
-    //private $pdo;
 
     /**
      * Request constructor
      *
      * @param ParamsBag $parameters Экземпляр ParamsBag для хранения аргументов
-     * @throws NetworkException
+     * @param CurlHandle|null $curlHandle Экземпляр CurlHandle для повторного использования
      */
-    public function __construct(ParamsBag $parameters)
+    public function __construct(ParamsBag $parameters, CurlHandle $curlHandle = null)
     {
-        if (!function_exists('curl_init')) {
-            throw new NetworkException('The cURL PHP extension was not loaded');
-        }
-
         $this->parameters = $parameters;
+        $this->curlHandle = $curlHandle !== null ? $curlHandle : new CurlHandle();
     }
 
     /**
@@ -118,6 +119,7 @@ class Request
      */
     protected function getRequest($url, $parameters = [], $modified = null)
     {
+
         if (!empty($parameters)) {
             $this->parameters->addGet($parameters);
         }
@@ -151,13 +153,16 @@ class Request
      */
     protected function prepareHeaders($modified = null)
     {
-        $headers = ['Content-Type: application/json'];
+        $headers = [
+            'Connection: keep-alive',
+            'Content-Type: application/json',
+        ];
 
         if ($modified !== null) {
             if (is_int($modified)) {
                 $headers[] = 'IF-MODIFIED-SINCE: ' . $modified;
             } else {
-                $headers[] = 'IF-MODIFIED-SINCE: ' . (new \DateTime($modified))->format(\DateTime::RFC1123);
+                $headers[] = 'IF-MODIFIED-SINCE: ' . (new DateTime($modified))->format(DateTime::RFC1123);
             }
         }
 
@@ -172,19 +177,11 @@ class Request
      */
     protected function prepareEndpoint($url)
     {
-        if ($this->v1 === false) {
-            $query = http_build_query(array_merge($this->parameters->getGet(), [
-                'USER_LOGIN' => $this->parameters->getAuth('login'),
-                'USER_HASH' => $this->parameters->getAuth('apikey'),
-            ]), null, '&');
-        } else {
-            $query = http_build_query(array_merge($this->parameters->getGet(), [
-                'login' => $this->parameters->getAuth('login'),
-                'api_key' => $this->parameters->getAuth('apikey'),
-            ]), null, '&');
-        }
+
+        $query = http_build_query($this->parameters->getGet());
 
         return sprintf('https://%s%s?%s', $this->parameters->getAuth('domain'), $url, $query);
+
     }
 
     /**
@@ -198,74 +195,57 @@ class Request
      */
     protected function request($url, $modified = null)
     {
-      
-//        $last_request = $this->read_last_request();
-//        $last_request = $last_request['time'];
-//
-//        $diff_time = round(((double)doubleTime() - (double)$last_request) * 1000)/1000;
-//
-//        $sleep_time = (1 - $diff_time) * 1000000;
-//
-//        if($sleep_time > 0) usleep($sleep_time);
-//
-//        $this->write_last_request(doubleTime());
-      
-      
-        $cookie = $_SERVER['DOCUMENT_ROOT'].'/vendor/dotzero/amocrm/cookie/'.$this->parameters->getAuth('domain').'_cookie.txt';
+        
+        $auth_params = $this->parameters->getAuth();
+        $subdomain = substr($auth_params['domain'], 0, strpos($auth_params['domain'], '.'));
+        $widget = $auth_params['widget'];
+
+        $auth_data = Oauth::get($subdomain, $widget);
 
         $headers = $this->prepareHeaders($modified);
         $endpoint = $this->prepareEndpoint($url);
+        
+        $headers[] = 'Authorization: Bearer ' . $auth_data['access_token'];
 
         $this->printDebug('url', $endpoint);
         $this->printDebug('headers', $headers);
-
-        $ch = curl_init();
+        $ch = $this->curlHandle->open();
 
         curl_setopt($ch, CURLOPT_URL, $endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie);
-        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_ENCODING, '');
 
         if ($this->parameters->hasPost()) {
-            $fields = json_encode([
-                'request' => $this->parameters->getPost(),
-            ]);
 
-            $ex = [
-                '/api/v2/leads',
-                '/api/v2/calls'
-            ];
+            $is_v4 = strpos($endpoint, 'api/v4') === false ? false : true;
 
-            if( in_array($url,$ex,false) ){
-                $params = json_decode($fields,1);
-                $rParams = [];
-                if( isset( $params['request'] ) ){
-                    foreach ( $params['request'] as $key => $param){
-                        $rParams[$key] = $param;
-                    }
-                }
-                $fields = json_encode( $rParams, 1);
+            if ($is_v4) {
+                $fields = json_encode($this->parameters->getPost());
+            } else {
+                $fields = json_encode([
+                    'request' => $this->parameters->getPost(),
+                ]);
             }
-          
+
+
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
             $this->printDebug('post params', $fields);
-          
         }
 
         if ($this->parameters->hasProxy()) {
             curl_setopt($ch, CURLOPT_PROXY, $this->parameters->getProxy());
         }
-        
+
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
         $error = curl_error($ch);
         $errno = curl_errno($ch);
-        
-        curl_close($ch);
+
+        $this->curlHandle->close();
 
         $this->lastHttpCode = $info['http_code'];
         $this->lastHttpResponse = $result;
@@ -276,21 +256,10 @@ class Request
         $this->printDebug('curl_errno', $errno);
 
         if ($result === false && !empty($error)) {
-            if( (int)$errno === 56 ){
-              $this->request($url, $modified);
-              return false;
-            }else{
-              throw new NetworkException($error, $errno);
-            }
+            throw new NetworkException($error, $errno);
         }
-      
-        if(intval($info['http_code']) == 429 || intval($info['http_code']) == 403){
-          sleep(1);
-          $this->request($url, $modified);
-        }
-      
+        
         return $this->parseResponse($result, $info);
-
     }
 
     /**
@@ -320,19 +289,14 @@ class Request
             } else {
                 throw new Exception('Invalid response body.', $code);
             }
-        } elseif ( !isset($result['response']) && !isset($result['_embedded']) ) {
+        } elseif (isset($result['_embedded'])) {
+            //API V4 response
+            return $result;
+        } elseif (!isset($result['response'])) {
             return false;
         }
 
-        if( isset( $result['response'] ) ){
-            return $result['response'];
-        }elseif( isset($result['_embedded']) ){
-            return $result['_embedded'];
-        }else{
-            return null;
-        }
-
-
+        return $result['response'];
     }
 
     /**
@@ -361,5 +325,6 @@ class Request
 
         return $line;
     }
+
 
 }

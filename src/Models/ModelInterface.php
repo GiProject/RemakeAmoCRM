@@ -1,6 +1,6 @@
 <?php
 
-namespace RemakeAmoCRM\Models;
+namespace lib\AmoCRM\Models;
 
 /**
  * Interface ModelInterface

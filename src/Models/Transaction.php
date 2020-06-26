@@ -1,9 +1,9 @@
 <?php
 
-namespace RemakeAmoCRM\Models;
+namespace lib\AmoCRM\Models;
 
-use RemakeAmoCRM\Models\Traits\SetDate;
-use RemakeAmoCRM\Models\Traits\SetNextDate;
+use lib\AmoCRM\Models\Traits\SetDate;
+use lib\AmoCRM\Models\Traits\SetNextDate;
 
 /**
  * Class Transaction

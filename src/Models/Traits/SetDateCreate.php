@@ -1,6 +1,6 @@
 <?php
 
-namespace RemakeAmoCRM\Models\Traits;
+namespace lib\AmoCRM\Models\Traits;
 
 trait SetDateCreate
 {

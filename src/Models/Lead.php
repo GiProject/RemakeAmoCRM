@@ -1,18 +1,18 @@
 <?php
 
-namespace RemakeAmoCRM\Models;
+namespace lib\AmoCRM\Models;
 
-use RemakeAmoCRM\Models\Traits\SetNote;
-use RemakeAmoCRM\Models\Traits\SetTags;
-use RemakeAmoCRM\Models\Traits\SetDateCreate;
-use RemakeAmoCRM\Models\Traits\SetLastModified;
+use lib\AmoCRM\Models\Traits\SetNote;
+use lib\AmoCRM\Models\Traits\SetTags;
+use lib\AmoCRM\Models\Traits\SetDateCreate;
+use lib\AmoCRM\Models\Traits\SetLastModified;
 
 /**
  * Class Lead
  *
  * Класс модель для работы со Сделками
  *
- * @package RemakeAmoCRM\Models
+ * @package AmoCRM\Models
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php
@@ -57,14 +57,9 @@ class Lead extends AbstractModel
      */
     public function apiList($parameters, $modified = null)
     {
-        $response = $this->getRequest('/api/v2/leads', $parameters, $modified);
+        $response = $this->getRequest('/private/api/v2/json/leads/list', $parameters, $modified);
 
-        if( isset( $response['leads'] ) ){
-            return isset($response['leads']) ? $response['leads'] : [];
-        }elseif( isset( $response['items'] ) ){
-            return isset($response['items']) ? $response['items'] : [];
-        }
-
+        return isset($response['leads']) ? $response['leads'] : [];
     }
 
     /**
@@ -83,36 +78,24 @@ class Lead extends AbstractModel
         }
 
         $parameters = [
-            'add' => [],
+            'leads' => [
+                'add' => [],
+            ],
         ];
 
         foreach ($leads AS $lead) {
-            $parameters['add'][] = $lead->getValues();
+            $parameters['leads']['add'][] = $lead->getValues();
         }
 
-        $response = $this->postRequest('/api/v2/leads', $parameters);
+        $response = $this->postRequest('/private/api/v2/json/leads/set', $parameters);
 
-        if( isset( $response['items'] ) ){
-            $result = [];
-            foreach ( $response['items'] as $item ){
-                $result[] = $item['id'];
-            }
-            if( count($result) === 1 ){
-                return $result[0];
-            }else{
-                return $result;
-            }
-
-        }
-
-        if (isset($response['add'])) {
+        if (isset($response['leads']['add'])) {
             $result = array_map(function($item) {
                 return $item['id'];
-            }, $response['add']);
+            }, $response['leads']['add']);
         } else {
             return [];
         }
-
 
         return count($leads) == 1 ? array_shift($result) : $result;
     }
@@ -133,17 +116,19 @@ class Lead extends AbstractModel
         $this->checkId($id);
 
         $parameters = [
-            'update' => [],
+            'leads' => [
+                'update' => [],
+            ],
         ];
 
         $lead = $this->getValues();
         $lead['id'] = $id;
         $lead['last_modified'] = strtotime($modified);
 
-        $parameters['update'][] = $lead;
+        $parameters['leads']['update'][] = $lead;
 
-        $response = $this->postRequest('/api/v2/leads', $parameters);
+        $response = $this->postRequest('/private/api/v2/json/leads/set', $parameters);
 
-        return empty($response['update']['errors']);
+        return empty($response['leads']['update']['errors']);
     }
 }

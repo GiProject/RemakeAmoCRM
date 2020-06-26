@@ -1,8 +1,8 @@
 <?php
 
-namespace RemakeAmoCRM\Webhooks;
+namespace lib\AmoCRM\Webhooks;
 
-use RemakeAmoCRM\Exception;
+use lib\AmoCRM\Exception;
 
 /**
  * Class Listener

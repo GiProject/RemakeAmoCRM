@@ -1,11 +1,11 @@
 <?php
 
-namespace RemakeAmoCRM\Models;
+namespace lib\AmoCRM\Models;
 
-use RemakeAmoCRM\Models\Traits\SetTags;
-use RemakeAmoCRM\Models\Traits\SetDateCreate;
-use RemakeAmoCRM\Models\Traits\SetLastModified;
-use RemakeAmoCRM\Models\Traits\SetLinkedLeadsId;
+use lib\AmoCRM\Models\Traits\SetTags;
+use lib\AmoCRM\Models\Traits\SetDateCreate;
+use lib\AmoCRM\Models\Traits\SetLastModified;
+use lib\AmoCRM\Models\Traits\SetLinkedLeadsId;
 
 /**
  * Class Company

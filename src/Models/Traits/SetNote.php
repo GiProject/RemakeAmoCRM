@@ -1,8 +1,8 @@
 <?php
 
-namespace RemakeAmoCRM\Models\Traits;
+namespace lib\AmoCRM\Models\Traits;
 
-use RemakeAmoCRM\Models\Note;
+use lib\AmoCRM\Models\Note;
 
 trait SetNote
 {

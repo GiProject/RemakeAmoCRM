@@ -1,16 +1,15 @@
 <?php
 
-namespace RemakeAmoCRM\Models;
+namespace lib\AmoCRM\Models;
 
-use RemakeAmoCRM\Models\Traits\SetDateCreate;
-use RemakeAmoCRM\Models\Traits\SetLastModified;
+use lib\AmoCRM\Models\Traits\SetDate;
 
 /**
- * Class Note
+ * Class Call
  *
- * Класс модель для работы с Примечаниями
+ * Класс модель для работы со Звонками
  *
- * @package RemakeAmoCRM\Models
+ * @package AmoCRM\Models
  * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php
@@ -20,86 +19,69 @@ use RemakeAmoCRM\Models\Traits\SetLastModified;
  */
 class Call extends AbstractModel
 {
-    use SetDateCreate, SetLastModified;
+    use SetDate;
 
     /**
      * @var array Список доступный полей для модели (исключая кастомные поля)
      */
     protected $fields = [
-        'phone_number',
-        'direction',
-        'uniq',
-        'duration',
-        'call_status',
+        'account_id',
+        'uuid',
+        'caller',
+        'to',
+        'date',
+        'type',
+        'billsec',
         'link',
-        'source',
-        'call_result'
     ];
 
-    const IN = 'inbound';
-    const OUT = 'outbound';
+    /**
+     * @const string Тип звонка входящий
+     */
+    const TYPE_INBOUND = 'inbound';
 
-    public function apiAdd($calls = [])
+    /**
+     * @const string Тип звонка исходящий
+     */
+    const TYPE_OUTBOUND = 'outbound';
+
+    /**
+     * Добавление звонков
+     *
+     * Метод позволяет добавлять звонки по одному или пакетно
+     *
+     * @link https://developers.amocrm.ru/rest_api/calls_set.php
+     * @param string $code Уникальный идентификатор сервиса
+     * @param string $key Ключ сервиса, который можно получить написав в техническую поддержку amoCRM
+     * @param array $calls Массив звонков для пакетного добавления
+     * @return string|array Уникальный идентификатор звонка или массив при пакетном добавлении
+     */
+    public function apiAdd($code, $key, $calls = [])
     {
-
+        $this->getParameters()->addGet('code', $code);
+        $this->getParameters()->addGet('key', $key);
 
         if (empty($calls)) {
             $calls = [$this];
         }
 
         $parameters = [
-            'add' => []
+            'add' => [],
         ];
 
-        foreach ($calls as $call) {
+        foreach ($calls AS $call) {
             $parameters['add'][] = $call->getValues();
         }
 
-        $response = $this->postRequest('/api/v2/calls', $parameters);
+        $response = $this->postRequest('/api/calls/add/', $parameters);
 
-        if( isset( $response['items'] ) ){
-            $result = [];
-            foreach ( $response['items'] as $item ){
-                $result[] = [
-                    'call_id' => $item['id'],
-                    'element_id' => $item['element_id'],
-                    'element_type' => $item['element_type'],
-                ];
-            }
-            return count($result) ? $result : null;
+        $result = [];
+        if (!isset($response['calls']['add']['errors'])) {
+            return $result;
+        } elseif (isset($response['calls']['add']['success'])) {
+            $result = $response['calls']['add']['success'];
         }
-        return false;
-    }
 
-    /**
-     * Обновление примечания
-     *
-     * Метод позволяет обновлять данные по уже существующим примечаниям
-     *
-     * @link https://developers.amocrm.ru/rest_api/notes_set.php
-     * @param int $id Уникальный идентификатор примечания
-     * @param string $modified Дата последнего изменения данной сущности
-     * @return bool Флаг успешности выполнения запроса
-     * @throws \RemakeAmoCRM\Exception
-     */
-    public function apiUpdate($id, $modified = 'now')
-    {
-        $this->checkId($id);
-
-        $parameters = [
-            'notes' => [
-                'update' => [],
-            ],
-        ];
-
-        $lead = $this->getValues();
-        $lead['id'] = $id;
-        $lead['last_modified'] = strtotime($modified);
-
-        $parameters['notes']['update'][] = $lead;
-
-        $response = $this->postRequest('/private/api/v2/json/notes/set', $parameters);
-
-        return empty($response['notes']['update']['errors']);
+        return count($calls) == 1 ? array_shift($result) : $result;
     }
 }

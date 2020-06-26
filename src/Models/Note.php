@@ -1,9 +1,9 @@
 <?php
 
-namespace RemakeAmoCRM\Models;
+namespace lib\AmoCRM\Models;
 
-use RemakeAmoCRM\Models\Traits\SetDateCreate;
-use RemakeAmoCRM\Models\Traits\SetLastModified;
+use lib\AmoCRM\Models\Traits\SetDateCreate;
+use lib\AmoCRM\Models\Traits\SetLastModified;
 
 /**
  * Class Note
@@ -159,7 +159,7 @@ class Note extends AbstractModel
      * @param int $id Уникальный идентификатор примечания
      * @param string $modified Дата последнего изменения данной сущности
      * @return bool Флаг успешности выполнения запроса
-     * @throws \RemakeAmoCRM\Exception
+     * @throws \AmoCRM\Exception
      */
     public function apiUpdate($id, $modified = 'now')
     {

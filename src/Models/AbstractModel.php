@@ -1,11 +1,11 @@
 <?php
 
-namespace RemakeAmoCRM\Models;
+namespace lib\AmoCRM\Models;
 
 use ArrayAccess;
-use RemakeAmoCRM\Exception;
-use RemakeAmoCRM\Helpers\Format;
-use RemakeAmoCRM\Request\Request;
+use lib\AmoCRM\Exception;
+use lib\AmoCRM\Helpers\Format;
+use lib\AmoCRM\Request\Request;
 
 /**
  * Class AbstractModel
