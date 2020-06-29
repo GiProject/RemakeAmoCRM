@@ -1,9 +1,9 @@
 <?php
 
-namespace lib\AmoCRM\Models;
+namespace RemakeAmoCRM\Models;
 
-use lib\AmoCRM\Models\Traits\SetDateCreate;
-use lib\AmoCRM\Models\Traits\SetLastModified;
+use RemakeAmoCRM\Models\Traits\SetDateCreate;
+use RemakeAmoCRM\Models\Traits\SetLastModified;
 
 /**
  * Class Task

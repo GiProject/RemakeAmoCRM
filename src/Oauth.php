@@ -1,6 +1,6 @@
 <?php
 
-namespace lib\AmoCRM;
+namespace RemakeAmoCRM;
 
 
 class Oauth
@@ -60,7 +60,7 @@ class Oauth
                 ( new \DateTime('now'))->modify('+ ' . $result['expires_in'] . ' seconds')->format('Y-m-d H:i:s')
             ];
             if( file_put_contents( __DIR__ . '/autorization/' . $auth['subdomain'] . '_' . $_GET['widget'], json_encode($auth_data) ) ){
-                $amo = new \lib\AmoCRM\Client($auth['subdomain'], $_GET['widget']);
+                $amo = new \RemakeAmoCRM\Client($auth['subdomain'], $_GET['widget']);
                 $account = $amo->account->apiCurrent();
                 $auth_data['account_id'] = $account['id'];
                 file_put_contents(__DIR__ . '/autorization/' . $auth['subdomain'] . '_' . $_GET['widget'], json_encode($auth_data) );
@@ -121,7 +121,7 @@ class Oauth
                 ( new \DateTime('now'))->modify('+ ' . $result['expires_in'] . ' seconds')->format('Y-m-d H:i:s')
             ];
             if( file_put_contents( __DIR__ . '/autorization/' . $subdomain . '_' . $_GET['widget'], json_encode($auth_data) ) ){
-                $amo = new \lib\AmoCRM\Client($subdomain, $_GET['widget']);
+                $amo = new \RemakeAmoCRM\Client($subdomain, $_GET['widget']);
                 $account = $amo->account->apiCurrent();
                 $auth_data['account_id'] = $account['id'];
                 file_put_contents(__DIR__ . '/autorization/' . $subdomain . '_' . $_GET['widget'], json_encode($auth_data) );

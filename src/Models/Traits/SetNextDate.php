@@ -1,6 +1,6 @@
 <?php
 
-namespace lib\AmoCRM\Models\Traits;
+namespace RemakeAmoCRM\Models\Traits;
 
 trait SetNextDate
 {

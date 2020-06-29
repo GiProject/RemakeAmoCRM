@@ -1,8 +1,8 @@
 <?php
 
-namespace lib\AmoCRM\Request;
+namespace RemakeAmoCRM\Request;
 
-use lib\AmoCRM\NetworkException;
+use RemakeAmoCRM\NetworkException;
 
 /**
  * Class CurlHandle

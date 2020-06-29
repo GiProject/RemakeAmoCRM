@@ -1,12 +1,12 @@
 <?php
 
-namespace lib\AmoCRM;
+namespace RemakeAmoCRM;
 
-use lib\AmoCRM\Models\ModelInterface;
-use lib\AmoCRM\Request\CurlHandle;
-use lib\AmoCRM\Request\ParamsBag;
-use lib\AmoCRM\Helpers\Fields;
-use lib\AmoCRM\Helpers\Format;
+use RemakeAmoCRM\Models\ModelInterface;
+use RemakeAmoCRM\Request\CurlHandle;
+use RemakeAmoCRM\Request\ParamsBag;
+use RemakeAmoCRM\Helpers\Fields;
+use RemakeAmoCRM\Helpers\Format;
 
 /**
  * Class Client

@@ -1,9 +1,9 @@
 <?php
 
-namespace lib\AmoCRM\Models;
+namespace RemakeAmoCRM\Models;
 
-use lib\AmoCRM\Models\Traits\SetTags;
-use lib\AmoCRM\Models\Traits\SetNextDate;
+use RemakeAmoCRM\Models\Traits\SetTags;
+use RemakeAmoCRM\Models\Traits\SetNextDate;
 
 /**
  * Class Customer

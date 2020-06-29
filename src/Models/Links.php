@@ -1,6 +1,6 @@
 <?php
 
-namespace lib\AmoCRM\Models;
+namespace RemakeAmoCRM\Models;
 
 /**
  * Class Links

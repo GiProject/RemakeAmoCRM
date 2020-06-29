@@ -1,11 +1,11 @@
 <?php
 
-namespace lib\AmoCRM\Request;
+namespace RemakeAmoCRM\Request;
 
 use DateTime;
-use lib\AmoCRM\Exception;
-use lib\AmoCRM\NetworkException;
-use lib\AmoCRM\Oauth;
+use RemakeAmoCRM\Exception;
+use RemakeAmoCRM\NetworkException;
+use RemakeAmoCRM\Oauth;
 
 /**
  * Class Request
