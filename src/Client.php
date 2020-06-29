@@ -92,7 +92,7 @@ class Client
      */
     public function __get($name)
     {
-        $classname = '\\lib\\AmoCRM\\Models\\' . Format::camelCase($name);
+        $classname = '\\RemakeAmoCRM\\Models\\' . Format::camelCase($name);
 
         if (!class_exists($classname)) {
             throw new ModelException('Model not exists: ' . $name);
