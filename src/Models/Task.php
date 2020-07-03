@@ -64,6 +64,12 @@ class Task extends AbstractModel
 
         return $this;
     }
+    public function setCompleteTillTimeStamp($timestamp)
+    {
+        $this->values['complete_till'] = $timestamp;
+
+        return $this;
+    }
 
     /**
      * Список задач
