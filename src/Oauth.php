@@ -25,6 +25,8 @@ class Oauth
     }
     
     public static function refresh_token($auth, $widget){
+        
+        echo '<pre>';
 
         $auth_file_src = __DIR__ . '/autorization/' . $auth['subdomain'] . '_' . $widget;
 
@@ -39,6 +41,9 @@ class Oauth
             'refresh_token' => $auth['refresh_token'],
             'redirect_uri' => $auth['redirect_uri']
         ];
+        
+//        print_r($request_data);
+//        echo "\n";
     
         $client = new \GuzzleHttp\Client([
             'allow_redirects' => true,
@@ -56,17 +61,32 @@ class Oauth
             );
             $result = json_decode($response->getBody()->getContents(), 1);
         } catch (RequestException $e) {
+            \AmoCRM\Helpers\Helper::tg_send('','791328432:AAG1hke8j1p6rwhOvJjqUkGOgDcI2kfwX5k', '-1001199317270', 'Ошибка получения refresh_token на аккаунте ' . $auth['subdomain']);
             print_r($e->getMessage());
             return;
         }
+        
+//        print_r($result);
+//        echo "\n";
+        //print_r(( new \DateTime('now'))->format('Y-m-d H:i:s'));
+//        echo "\n";
+        
+        
+        $expires_in = ( new \DateTime('now'))->modify('+1 day')->format('Y-m-d H:i:s');
+//        print_r($expires_in);
+//        echo "\n";
 
         if( !empty($result) ){
-            $auth_data = array_merge([
+            $auth_data = array_merge($auth, [
                 'access_token' => $result['access_token'],
                 'refresh_token' => $result['refresh_token'],
-                'expires_in' => ( new \DateTime('now'))->modify('+ ' . $result['expires_in'] . ' seconds')->format('Y-m-d H:i:s')
-            ], $auth);
-
+                'expires_in' => $expires_in
+//                'expires_in' => ( new \DateTime('now'))->modify('+ ' . abs($result['expires_in']) . ' seconds')->format('Y-m-d H:i:s')
+            ]);
+    
+//            print_r($auth_data);
+//            echo "\n";
+            
             file_put_contents( __DIR__ . '/autorization/' . $auth['subdomain'] . '_' . $auth['widget'], json_encode($auth_data) );
         }
     
