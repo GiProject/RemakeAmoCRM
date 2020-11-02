@@ -1,330 +1,114 @@
 <?php
 
-namespace RemakeAmoCRM\Request;
+namespace RemakeAmoCRM;
 
-use DateTime;
-use RemakeAmoCRM\Exception;
-use RemakeAmoCRM\NetworkException;
-use RemakeAmoCRM\Oauth;
+use RemakeAmoCRM\Models\ModelInterface;
+use RemakeAmoCRM\Request\CurlHandle;
+use RemakeAmoCRM\Request\ParamsBag;
+use RemakeAmoCRM\Helpers\Fields;
+use RemakeAmoCRM\Helpers\Format;
 
 /**
- * Class Request
+ * Class Client
  *
- * Класс отправляющий запросы к API amoCRM используя cURL
+ * Основной класс для получения доступа к моделям amoCRM API
  *
- * @package AmoCRM\Request
- * @author dotzero <mail@dotzero.ru>getRequest
+ * @package AmoCRM
+ * @author dotzero <mail@dotzero.ru>
  * @link http://www.dotzero.ru/
  * @link https://github.com/dotzero/amocrm-php
+ * @property \AmoCRM\Models\Account $account
+ * @property \AmoCRM\Models\Call $call
+ * @property \AmoCRM\Models\Catalog $catalog
+ * @property \AmoCRM\Models\CatalogElement $catalog_element
+ * @property \AmoCRM\Models\Company $company
+ * @property \AmoCRM\Models\Contact $contact
+ * @property \AmoCRM\Models\Customer $customer
+ * @property \AmoCRM\Models\CustomersPeriods $customers_periods
+ * @property \AmoCRM\Models\CustomField $custom_field
+ * @property \AmoCRM\Models\Lead $lead
+ * @property \AmoCRM\Models\Links $links
+ * @property \AmoCRM\Models\Note $note
+ * @property \AmoCRM\Models\Pipelines $pipelines
+ * @property \AmoCRM\Models\Task $task
+ * @property \AmoCRM\Models\Transaction $transaction
+ * @property \AmoCRM\Models\Unsorted $unsorted
+ * @property \AmoCRM\Models\Webhooks $webhooks
+ * @property \AmoCRM\Models\Widgets $widgets
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class Request
+class Client
 {
     /**
-     * @var bool Использовать устаревшую схему авторизации
+     * @var Fields|null Экземпляр Fields для хранения номеров полей
      */
-    protected $v1 = false;
-
-    /**
-     * @var bool Флаг вывода отладочной информации
-     */
-    private $debug = false;
+    public $fields = null;
 
     /**
      * @var ParamsBag|null Экземпляр ParamsBag для хранения аргументов
      */
-    private $parameters = null;
+    public $parameters = null;
 
     /**
-     * @var CurlHandle Экземпляр CurlHandle
+     * @var CurlHandle Экземпляр CurlHandle для повторного использования
      */
     private $curlHandle;
 
     /**
-     * @var int|null Последний полученный HTTP код
-     */
-    private $lastHttpCode = null;
-
-    /**
-     * @var string|null Последний полученный HTTP ответ
-     */
-    private $lastHttpResponse = null;
-
-    /**
-     * Request constructor
+     * Client constructor
      *
-     * @param ParamsBag $parameters Экземпляр ParamsBag для хранения аргументов
-     * @param CurlHandle|null $curlHandle Экземпляр CurlHandle для повторного использования
+     * @param string $domain Поддомен или домен amoCRM
+     * @param string $widget код интеграции amoCRM
+     * @param string|null $proxy Прокси сервер для отправки запроса
      */
-    public function __construct(ParamsBag $parameters, CurlHandle $curlHandle = null)
+    public function __construct($domain, $widget = '', $proxy = null)
     {
-        $this->parameters = $parameters;
-        $this->curlHandle = $curlHandle !== null ? $curlHandle : new CurlHandle();
-    }
-
-    /**
-     * Установка флага вывода отладочной информации
-     *
-     * @param bool $flag Значение флага
-     * @return $this
-     */
-    public function debug($flag = false)
-    {
-        $this->debug = (bool)$flag;
-
-        return $this;
-    }
-
-    /**
-     * Возвращает последний полученный HTTP код
-     *
-     * @return int|null
-     */
-    public function getLastHttpCode()
-    {
-        return $this->lastHttpCode;
-    }
-
-    /**
-     * Возвращает последний полученный HTTP ответ
-     *
-     * @return null|string
-     */
-    public function getLastHttpResponse()
-    {
-        return $this->lastHttpResponse;
-    }
-
-    /**
-     * Возвращает экземпляр ParamsBag для хранения аргументов
-     *
-     * @return ParamsBag|null
-     */
-    protected function getParameters()
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * Выполнить HTTP GET запрос и вернуть тело ответа
-     *
-     * @param string $url Запрашиваемый URL
-     * @param array $parameters Список GET параметров
-     * @param null|string $modified Значение заголовка IF-MODIFIED-SINCE
-     * @return mixed
-     * @throws Exception
-     * @throws NetworkException
-     */
-    protected function getRequest($url, $parameters = [], $modified = null)
-    {
-
-        if (!empty($parameters)) {
-            $this->parameters->addGet($parameters);
+        // Разернуть поддомен в полный домен
+        if (strpos($domain, '.') === false) {
+            $domain = sprintf('%s.amocrm.ru', $domain);
         }
 
-        return $this->request($url, $modified);
-    }
+        $this->parameters = new ParamsBag();
+        $this->parameters->addAuth('domain', $domain);
 
-    /**
-     * Выполнить HTTP POST запрос и вернуть тело ответа
-     *
-     * @param string $url Запрашиваемый URL
-     * @param array $parameters Список POST параметров
-     * @return mixed
-     * @throws Exception
-     * @throws NetworkException
-     */
-    protected function postRequest($url, $parameters = [])
-    {
-        if (!empty($parameters)) {
-            $this->parameters->addPost($parameters);
-        }
-
-        return $this->request($url);
-    }
-
-    /**
-     * Подготавливает список заголовков HTTP
-     *
-     * @param mixed $modified Значение заголовка IF-MODIFIED-SINCE
-     * @return array
-     */
-    protected function prepareHeaders($modified = null)
-    {
-        $headers = [
-            'Connection: keep-alive',
-            'Content-Type: application/json',
-        ];
-
-        if ($modified !== null) {
-            if (is_int($modified)) {
-                $headers[] = 'IF-MODIFIED-SINCE: ' . $modified;
-            } else {
-                $headers[] = 'IF-MODIFIED-SINCE: ' . (new DateTime($modified))->format(DateTime::RFC1123);
+        if( is_array($widget) ){
+            if( !empty($widget['access_token']) ){
+                $this->parameters->addAuth('access_token', $widget['access_token']);
             }
+        }else{
+            $this->parameters->addAuth('widget', $widget);
         }
 
-        return $headers;
+
+        if ($proxy !== null) {
+            $this->parameters->addProxy($proxy);
+        }
+
+        $this->fields = new Fields();
+
+        $this->curlHandle = new CurlHandle();
     }
 
     /**
-     * Подготавливает URL для HTTP запроса
+     * Возвращает экземпляр модели для работы с amoCRM API
      *
-     * @param string $url Запрашиваемый URL
-     * @return string
+     * @param string $name Название модели
+     * @return ModelInterface
+     * @throws ModelException
      */
-    protected function prepareEndpoint($url)
+    public function __get($name)
     {
+        $classname = '\\RemakeAmoCRM\\Models\\' . Format::camelCase($name);
 
-        $query = http_build_query($this->parameters->getGet());
+        if (!class_exists($classname)) {
+            throw new ModelException('Model not exists: ' . $name);
+        }
 
-        return sprintf('https://%s%s?%s', $this->parameters->getAuth('domain'), $url, $query);
+        // Чистим GET и POST от предыдущих вызовов
+        $this->parameters->clearGet()->clearPost();
 
+        return new $classname($this->parameters, $this->curlHandle);
     }
-
-    /**
-     * Выполнить HTTP запрос и вернуть тело ответа
-     *
-     * @param string $url Запрашиваемый URL
-     * @param null|string $modified Значение заголовка IF-MODIFIED-SINCE
-     * @return mixed
-     * @throws Exception
-     * @throws NetworkException
-     */
-    protected function request($url, $modified = null)
-    {
-        
-        $auth_params = $this->parameters->getAuth();
-        $subdomain = substr($auth_params['domain'], 0, strpos($auth_params['domain'], '.'));
-        $widget = $auth_params['widget'];
-
-        $auth_data = Oauth::get($subdomain, $widget);
-
-        $headers = $this->prepareHeaders($modified);
-        $endpoint = $this->prepareEndpoint($url);
-        
-        $headers[] = 'Authorization: Bearer ' . $auth_data['access_token'];
-
-        $this->printDebug('url', $endpoint);
-        $this->printDebug('headers', $headers);
-        $ch = $this->curlHandle->open();
-
-        curl_setopt($ch, CURLOPT_URL, $endpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_ENCODING, '');
-
-        if ($this->parameters->hasPost()) {
-
-            $is_v4 = strpos($endpoint, 'api/v4') === false ? false : true;
-
-            if ($is_v4) {
-                $fields = json_encode($this->parameters->getPost());
-            } else {
-                $fields = json_encode([
-                    'request' => $this->parameters->getPost(),
-                ]);
-            }
-
-
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-            $this->printDebug('post params', $fields);
-        }
-
-        if ($this->parameters->hasProxy()) {
-            curl_setopt($ch, CURLOPT_PROXY, $this->parameters->getProxy());
-        }
-
-        $result = curl_exec($ch);
-        $info = curl_getinfo($ch);
-        $error = curl_error($ch);
-        $errno = curl_errno($ch);
-
-        $this->curlHandle->close();
-
-        $this->lastHttpCode = $info['http_code'];
-        $this->lastHttpResponse = $result;
-
-        $this->printDebug('curl_exec', $result);
-        $this->printDebug('curl_getinfo', $info);
-        $this->printDebug('curl_error', $error);
-        $this->printDebug('curl_errno', $errno);
-
-        if ($result === false && !empty($error)) {
-            throw new NetworkException($error, $errno);
-        }
-        
-        return $this->parseResponse($result, $info);
-    }
-
-    /**
-     * Парсит HTTP ответ, проверяет на наличие ошибок и возвращает тело ответа
-     *
-     * @param string $response HTTP ответ
-     * @param array $info Результат функции curl_getinfo
-     * @return mixed
-     * @throws Exception
-     */
-    protected function parseResponse($response, $info)
-    {
-        $result = json_decode($response, true);
-
-        if (floor($info['http_code'] / 100) >= 3) {
-            if (isset($result['response']['error_code']) && $result['response']['error_code'] > 0) {
-                $code = $result['response']['error_code'];
-            } elseif ($result !== null) {
-                $code = 0;
-            } else {
-                $code = $info['http_code'];
-            }
-            if ($this->v1 === false && isset($result['response']['error'])) {
-                throw new Exception($result['response']['error'], $code);
-            } elseif (isset($result['response'])) {
-                throw new Exception(json_encode($result['response']));
-            } else {
-                throw new Exception('Invalid response body.', $code);
-            }
-        } elseif (isset($result['_embedded'])) {
-            //API V4 response
-            return $result;
-        } elseif (!isset($result['response'])) {
-            return false;
-        }
-
-        return $result['response'];
-    }
-
-    /**
-     * Вывода отладочной информации
-     *
-     * @param string $key Заголовок отладочной информации
-     * @param mixed $value Значение отладочной информации
-     * @param bool $return Возврат строки вместо вывода
-     * @return mixed
-     */
-    protected function printDebug($key = '', $value = null, $return = false)
-    {
-        if ($this->debug !== true) {
-            return false;
-        }
-
-        if (!is_string($value)) {
-            $value = print_r($value, true);
-        }
-
-        $line = sprintf('[DEBUG] %s: %s', $key, $value);
-
-        if ($return === false) {
-            return print_r($line . PHP_EOL);
-        }
-
-        return $line;
-    }
-
-
 }

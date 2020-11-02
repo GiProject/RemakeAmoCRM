@@ -72,7 +72,15 @@ class Client
 
         $this->parameters = new ParamsBag();
         $this->parameters->addAuth('domain', $domain);
-        $this->parameters->addAuth('widget', $widget);
+
+        if( is_array($widget) ){
+            if( !empty($widget['access_token']) ){
+                $this->parameters->addAuth('access_token', $widget['access_token']);
+            }
+        }else{
+            $this->parameters->addAuth('widget', $widget);
+        }
+
 
         if ($proxy !== null) {
             $this->parameters->addProxy($proxy);
@@ -100,7 +108,7 @@ class Client
 
         // Чистим GET и POST от предыдущих вызовов
         $this->parameters->clearGet()->clearPost();
-        
+
         return new $classname($this->parameters, $this->curlHandle);
     }
 }
