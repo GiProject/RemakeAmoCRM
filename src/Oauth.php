@@ -5,32 +5,30 @@ namespace RemakeAmoCRM;
 
 class Oauth
 {
-    
+
+    static $auth_file_src;
+
     public static function get($subdomain, $widget){
 
-        $auth_file_src = __DIR__ . '/autorization/' . $subdomain . '_' . $widget;
+        self::$auth_file_src = __DIR__ . '/autorization/' . $subdomain . '_' . $widget;
 
-        if( file_exists($auth_file_src) ){
-            $auth = json_decode(file_get_contents($auth_file_src),1);
+        if( file_exists(self::$auth_file_src) ){
+            $auth = json_decode(file_get_contents(self::$auth_file_src),1);
         }else{
             return false;
         }
-        
+
         if (time() > strtotime($auth['expires_in'])) {//требуется обновить токен
             $auth = self::refresh_token($auth, $widget);
         }
-        
+
         return $auth;
-        
+
     }
-    
+
     public static function refresh_token($auth, $widget){
-        
-        echo '<pre>';
 
-        $auth_file_src = __DIR__ . '/autorization/' . $auth['subdomain'] . '_' . $widget;
-
-        if( !file_exists($auth_file_src) ){
+        if( !file_exists(self::$auth_file_src) ){
             return;
         }
 
@@ -41,15 +39,12 @@ class Oauth
             'refresh_token' => $auth['refresh_token'],
             'redirect_uri' => $auth['redirect_uri']
         ];
-        
-//        print_r($request_data);
-//        echo "\n";
-    
+
         $client = new \GuzzleHttp\Client([
             'allow_redirects' => true,
             'timeout' => 10
         ]);
-    
+
         try {
             $response = $client->request('POST', 'https://' .  $auth['subdomain'] . '.amocrm.ru/oauth2/access_token',
                 [
@@ -60,40 +55,29 @@ class Oauth
                 ]
             );
             $result = json_decode($response->getBody()->getContents(), 1);
-        } catch (RequestException $e) {
-            \AmoCRM\Helpers\Helper::tg_send('','791328432:AAG1hke8j1p6rwhOvJjqUkGOgDcI2kfwX5k', '-1001199317270', 'Ошибка получения refresh_token на аккаунте ' . $auth['subdomain']);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
             print_r($e->getMessage());
+            echo "\n";
             return;
         }
-        
-//        print_r($result);
-//        echo "\n";
-        //print_r(( new \DateTime('now'))->format('Y-m-d H:i:s'));
-//        echo "\n";
-        
-        
-        $expires_in = ( new \DateTime('now'))->modify('+1 day')->format('Y-m-d H:i:s');
-//        print_r($expires_in);
-//        echo "\n";
 
         if( !empty($result) ){
+
             $auth_data = array_merge($auth, [
                 'access_token' => $result['access_token'],
                 'refresh_token' => $result['refresh_token'],
-                'expires_in' => $expires_in
-//                'expires_in' => ( new \DateTime('now'))->modify('+ ' . abs($result['expires_in']) . ' seconds')->format('Y-m-d H:i:s')
+                'expires_in' => ( new \DateTime('now'))->modify('+ ' . $result['expires_in'] . ' seconds')->format('Y-m-d H:i:s')
             ]);
-    
-//            print_r($auth_data);
-//            echo "\n";
-            
-            file_put_contents( __DIR__ . '/autorization/' . $auth['subdomain'] . '_' . $auth['widget'], json_encode($auth_data) );
+
+            file_put_contents( self::$auth_file_src, json_encode($auth_data) );
         }
-    
+
         return $result;
     }
-    
+
     public function install( $client_id, $client_secret, $oauth_url){
+
+        echo 'install' . "\n";
 
         if( !isset($_GET['code']) || !isset($_GET['referer']) || !isset($_GET['from_widget']) || !isset($_GET['widget']) ){
             return 'нет данных для авторизации';
@@ -132,6 +116,7 @@ class Oauth
             $result = json_decode($response->getBody()->getContents(), 1);
         } catch (RequestException $e) {
             echo print_r($e->getMessage(), 1) . "\n" . $url . "\n" . print_r($request_data, 1) . "\n";
+            file_put_contents(__DIR__ . '/refresh_token_error.log', $e->getMessage() . "\n" . $url . "\n" . print_r($request_data, 1) . "\n\n", FILE_APPEND);
             return;
         }
 
