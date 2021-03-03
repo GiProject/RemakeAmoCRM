@@ -195,16 +195,20 @@ class Request
      */
     protected function request($url, $modified = null)
     {
-        
+
         $auth_params = $this->parameters->getAuth();
         $subdomain = substr($auth_params['domain'], 0, strpos($auth_params['domain'], '.'));
-        $widget = $auth_params['widget'];
 
-        $auth_data = Oauth::get($subdomain, $widget);
+        if( isset($auth_params['access_token']) ){
+            $auth_data['access_token'] = $auth_params['access_token'];
+        }else{
+            $widget = $auth_params['widget'];
+            $auth_data = Oauth::get($subdomain, $widget);
+        }
 
         $headers = $this->prepareHeaders($modified);
         $endpoint = $this->prepareEndpoint($url);
-        
+
         $headers[] = 'Authorization: Bearer ' . $auth_data['access_token'];
 
         $this->printDebug('url', $endpoint);
@@ -258,7 +262,7 @@ class Request
         if ($result === false && !empty($error)) {
             throw new NetworkException($error, $errno);
         }
-        
+
         return $this->parseResponse($result, $info);
     }
 
